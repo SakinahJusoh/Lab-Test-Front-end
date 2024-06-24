@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff List</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: 'https://kerbau.odaje.biz/getstaff.php',
+                method: 'GET',
+                success: function(response) {
+                    const data = JSON.parse(response);
+                    const status = JSON.parse(data[0]).status;
+
+                    if (status === 1) {
+                        data.slice(1).forEach(item => {
+                            const staff = JSON.parse(item);
+                            $('#staffList').append(`
+                                <li class="list-group-item">
+                                    <a href="secondpage.html?id=${staff.employeeNumber}">${staff.email}</a>
+                                </li>
+                            `);
+                        });
+                    } else {
+                        $('#staffList').append('<li class="list-group-item">No staff data available</li>');
+                    }
+                },
+                error: function() {
+                    $('#staffList').append('<li class="list-group-item">Error retrieving staff data</li>');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Staff Emails</h1>
+        <ul id="staffList" class="list-group mt-3"></ul>
+    </div>
+</body>
+</html>

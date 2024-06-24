@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const employeeNumber = urlParams.get('id');
+
+            if (employeeNumber) {
+                $.ajax({
+                    url: `https://kerbau.odaje.biz/getstaffbyid.php?id=${employeeNumber}`,
+                    method: 'GET',
+                    success: function(response) {
+                        const data = JSON.parse(response);
+                        const status = JSON.parse(data[0]).status;
+
+                        if (status === 1) {
+                            const staff = JSON.parse(data[1]);
+                            $('#staffDetails').html(`
+                                <div class="card mt-5">
+                                    <div class="card-header">
+                                        <h4>Staff Details</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Employee Number:</strong> ${staff.employeeNumber}</p>
+                                        <p><strong>Name:</strong> ${staff.firstName} ${staff.lastName}</p>
+                                        <p><strong>Extension:</strong> ${staff.extension}</p>
+                                        <p><strong>Email:</strong> ${staff.email}</p>
+                                        <p><strong>Office Code:</strong> ${staff.officeCode}</p>
+                                        <p><strong>Reports To:</strong> ${staff.reportsTo ? staff.reportsTo : 'N/A'}</p>
+                                        <p><strong>Job Title:</strong> ${staff.jobTitle}</p>
+                                    </div>
+                                </div>
+                            `);
+                        } else {
+                            $('#staffDetails').html('<p class="mt-5">No staff details found.</p>');
+                        }
+                    },
+                    error: function() {
+                        $('#staffDetails').html('<p class="mt-5">Error retrieving staff details.</p>');
+                    }
+                });
+            } else {
+                $('#staffDetails').html('<p class="mt-5">No employee selected.</p>');
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id="staffDetails"></div>
+    </div>
+</body>
+</html>
